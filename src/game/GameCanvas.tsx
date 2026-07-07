@@ -511,6 +511,14 @@ export default function GameCanvas({ onHudChange }: Props) {
       time += dt
       update(dt)
       draw()
+      // debug hook for automated playtests
+      ;(window as any).__GEO_DEBUG = {
+        levelIndex,
+        status,
+        deaths,
+        square: { x: square.x, y: square.y },
+        circle: { x: circle.x, y: circle.y },
+      }
       raf = requestAnimationFrame(frame)
     }
 
