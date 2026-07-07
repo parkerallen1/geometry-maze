@@ -95,3 +95,312 @@ canvas {
   max-width: 100%;
   height: auto;
 }
+
+/* ---------- buttons ---------- */
+
+.btn {
+  background: #161c33;
+  border: 1px solid #2a3566;
+  border-radius: 6px;
+  color: #e8ecff;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  background: #1e2646;
+  border-color: #39d8ff;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #b06a00, #0b7ea0);
+  border-color: #39d8ff;
+  font-weight: 700;
+}
+
+.btn-howto {
+  font-weight: 600;
+}
+
+/* ---------- tutorial overlay ---------- */
+
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 10, 20, 0.75);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 16px;
+}
+
+.tutorial-card {
+  position: relative;
+  width: 560px;
+  max-width: 100%;
+  background: #10152b;
+  border: 2px solid #2a3566;
+  border-radius: 12px;
+  box-shadow: 0 0 60px rgba(57, 216, 255, 0.18);
+  padding: 28px 32px 20px;
+}
+
+.tutorial-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #8b93b8;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.tutorial-close:hover {
+  color: #e8ecff;
+}
+
+.tutorial-page {
+  min-height: 240px;
+}
+
+.tutorial-page h2 {
+  font-size: 22px;
+  margin-bottom: 18px;
+  background: linear-gradient(90deg, #ffb020, #39d8ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tutorial-page ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #c3cae8;
+}
+
+.tutorial-page ul li::before {
+  content: '▸ ';
+  color: #39d8ff;
+}
+
+.tutorial-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 22px;
+}
+
+.tutorial-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: #2a3566;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dot.active {
+  background: #39d8ff;
+  box-shadow: 0 0 8px rgba(57, 216, 255, 0.8);
+}
+
+/* ---------- tutorial demo pieces (mini replicas of game objects) ---------- */
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.demo-center {
+  justify-content: center;
+}
+
+.demo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 14px;
+  color: #c3cae8;
+}
+
+.p1-color {
+  color: #ffb020;
+}
+
+.p2-color {
+  color: #39d8ff;
+}
+
+.demo-arrow {
+  color: #8b93b8;
+  font-size: 13px;
+}
+
+.demo-inline {
+  display: inline-block;
+  vertical-align: middle;
+  transform: scale(0.7);
+  margin-left: 2px;
+}
+
+.shape-square,
+.shape-circle {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.shape-square {
+  background: #ffb020;
+  border-radius: 4px;
+  box-shadow: 0 0 14px rgba(255, 176, 32, 0.7);
+}
+
+.shape-circle {
+  background: #39d8ff;
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgba(57, 216, 255, 0.7);
+}
+
+.shape-square::before,
+.shape-circle::before {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 8px;
+  width: 5px;
+  height: 9px;
+  background: #0b0e1a;
+  box-shadow: 15px 0 #0b0e1a;
+  border-radius: 1px;
+}
+
+.demo-plate {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #f5d90a;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(245, 217, 10, 0.6);
+  flex-shrink: 0;
+}
+
+.demo-plate-heavy {
+  border-color: #ff8c3a;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 140, 58, 0.6);
+}
+
+.demo-door {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: #f5d90a;
+  color: #0b0e1a;
+  font-weight: 800;
+  font-size: 17px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(245, 217, 10, 0.6);
+  flex-shrink: 0;
+}
+
+.demo-door-open {
+  background: transparent;
+  color: rgba(245, 217, 10, 0.6);
+  border: 2px dashed rgba(245, 217, 10, 0.5);
+  box-shadow: none;
+}
+
+.demo-gap {
+  display: inline-block;
+  position: relative;
+  width: 34px;
+  height: 34px;
+  background: #1a2142;
+  border: 1px solid #31407f;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.demo-gap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 11px;
+  width: 12px;
+  height: 100%;
+  background: #0b0e1a;
+}
+
+.demo-gap::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(57, 216, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(57, 216, 255, 0.7);
+}
+
+.demo-spikes {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.demo-spikes i {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 20px solid #ff3355;
+  filter: drop-shadow(0 0 5px rgba(255, 51, 85, 0.8));
+}
+
+.demo-exit {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.demo-exit-square {
+  border: 3px solid #ffb020;
+  border-radius: 4px;
+  background: rgba(255, 176, 32, 0.15);
+  box-shadow: 0 0 10px rgba(255, 176, 32, 0.5);
+}
+
+.demo-exit-circle {
+  border: 3px solid #39d8ff;
+  border-radius: 50%;
+  background: rgba(57, 216, 255, 0.15);
+  box-shadow: 0 0 10px rgba(57, 216, 255, 0.5);
+}

@@ -81,12 +81,15 @@ function centerOf(cell: Cell): { x: number; y: number } {
 
 interface Props {
   onHudChange: (hud: HudState) => void
+  paused?: boolean
 }
 
-export default function GameCanvas({ onHudChange }: Props) {
+export default function GameCanvas({ onHudChange, paused = false }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hudRef = useRef(onHudChange)
   hudRef.current = onHudChange
+  const pausedRef = useRef(paused)
+  pausedRef.current = paused
 
   useEffect(() => {
     const canvas = canvasRef.current!
@@ -137,6 +140,7 @@ export default function GameCanvas({ onHudChange }: Props) {
     // ---- input ----
     const keys = new Set<string>()
     const onKeyDown = (e: KeyboardEvent) => {
+      if (pausedRef.current) return // tutorial owns the keyboard while open
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault()
       keys.add(e.key.length === 1 ? e.key.toLowerCase() : e.key)
       if ((e.key === 'r' || e.key === 'R') && status !== 'won') loadLevel(levelIndex)
@@ -509,7 +513,11 @@ export default function GameCanvas({ onHudChange }: Props) {
       const dt = Math.min((now - last) / 1000, 1 / 30)
       last = now
       time += dt
-      update(dt)
+      if (pausedRef.current) {
+        keys.clear() // drop any held keys so nothing "sticks" after unpausing
+      } else {
+        update(dt)
+      }
       draw()
       // debug hook for automated playtests
       ;(window as any).__GEO_DEBUG = {
