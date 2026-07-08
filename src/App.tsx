@@ -7,12 +7,20 @@ export interface HudState {
   levelIndex: number
   deaths: number
   won: boolean
+  padSquare: string | null
+  padCircle: string | null
 }
 
 const TUTORIAL_SEEN_KEY = 'geo-maze-tutorial-seen'
 
 export default function App() {
-  const [hud, setHud] = useState<HudState>({ levelIndex: 0, deaths: 0, won: false })
+  const [hud, setHud] = useState<HudState>({
+    levelIndex: 0,
+    deaths: 0,
+    won: false,
+    padSquare: null,
+    padCircle: null,
+  })
   const [showTutorial, setShowTutorial] = useState(() => !localStorage.getItem(TUTORIAL_SEEN_KEY))
   const level = LEVELS[Math.min(hud.levelIndex, LEVELS.length - 1)]
 
@@ -35,17 +43,29 @@ export default function App() {
         </button>
       </div>
       <GameCanvas onHudChange={setHud} paused={showTutorial} />
-      <div className="hint">{hud.won ? 'Press Enter to play again from Level 1.' : level.hint}</div>
+      <div className="hint">{hud.won ? 'Press Enter (or Start) to play again from Level 1.' : level.hint}</div>
       <div className="controls">
         <span className="p1">
-          <b>■ Square</b> — <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+          <b>■ Square</b> — {hud.padSquare ? <span className="pad-chip">🎮 {hud.padSquare}</span> : null}{' '}
+          <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
         </span>
         <span className="p2">
-          <b>● Circle</b> — <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
+          <b>● Circle</b> — {hud.padCircle ? <span className="pad-chip">🎮 {hud.padCircle}</span> : null}{' '}
+          <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
         </span>
         <span>
           <kbd>R</kbd> restart level
         </span>
+      </div>
+      <div className="pad-status">
+        {hud.padSquare || hud.padCircle ? (
+          <>
+            🎮 Controller connected — left stick / D-pad moves, <kbd>Start</kbd> restarts,{' '}
+            <kbd>Select</kbd> swaps shapes
+          </>
+        ) : (
+          <>🎮 Bluetooth &amp; USB controllers supported — pair one and press any button on it</>
+        )}
       </div>
       {showTutorial && <Tutorial onClose={closeTutorial} />}
     </>

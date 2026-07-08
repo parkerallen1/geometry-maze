@@ -9,8 +9,15 @@ work together to escape each level — neither can make it alone.
 
 | Player | Shape | Controls | Special ability |
 | --- | --- | --- | --- |
-| 1 | 🟧 Square | `W` `A` `S` `D` | Heavy — the only shape that can press orange **heavy plates** |
-| 2 | 🔵 Circle | `↑` `←` `↓` `→` | Nimble — the only shape that fits through **narrow gaps** |
+| 1 | 🟧 Square | `W` `A` `S` `D` or controller 1 | Heavy — the only shape that can press orange **heavy plates** |
+| 2 | 🔵 Circle | `↑` `←` `↓` `→` or controller 2 | Nimble — the only shape that fits through **narrow gaps** |
+
+**🎮 Controller support:** pair one or two Bluetooth (or USB) controllers and press any button so
+the browser detects them. The first controller drives the Square, the second the Circle — the
+keyboard always stays live, so keyboard + one controller is a great two-player setup. Left stick
+or D-pad moves, **Start** restarts the level, **Select/Back** swaps which shape a controller
+drives. Works with any standard-mapping gamepad (Xbox, PlayStation, Switch Pro, most Bluetooth
+pads).
 
 - **Plates** (glowing rings) hold their matching **door** open only while someone stands on them —
   you'll constantly take turns holding doors for each other.

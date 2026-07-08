@@ -84,6 +84,11 @@ export default function Tutorial({ onClose }: Props) {
                 </span>
               </div>
             </div>
+            <p className="tutorial-note">
+              🎮 <b>Controllers work too</b> — pair one or two Bluetooth/USB controllers and press
+              any button so the browser detects them. Left stick or D-pad moves, <kbd>Start</kbd>{' '}
+              restarts, <kbd>Select</kbd> swaps which shape you drive.
+            </p>
           </div>
         )}
 

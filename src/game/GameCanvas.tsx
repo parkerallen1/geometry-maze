@@ -114,7 +114,74 @@ export default function GameCanvas({ onHudChange, paused = false }: Props) {
     const players = [square, circle]
 
     function pushHud() {
-      hudRef.current({ levelIndex, deaths, won: status === 'won' })
+      const pads = padAssignment()
+      hudRef.current({
+        levelIndex,
+        deaths,
+        won: status === 'won',
+        padSquare: pads.square ? `Controller ${pads.square.index + 1}` : null,
+        padCircle: pads.circle ? `Controller ${pads.circle.index + 1}` : null,
+      })
+    }
+
+    // ---- gamepads (Bluetooth / USB controllers via the Gamepad API) ----
+    let padsSwapped = false
+    let lastPadSignature = ''
+    const prevPadButtons = new Map<number, boolean[]>()
+
+    function connectedPads(): Gamepad[] {
+      const raw = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : []
+      const pads: Gamepad[] = []
+      for (const p of raw) if (p && p.connected) pads.push(p)
+      return pads
+    }
+
+    // first controller drives the Square, second the Circle; Select/Back swaps
+    function padAssignment(): { square: Gamepad | null; circle: Gamepad | null } {
+      const pads = connectedPads()
+      const a = pads[0] ?? null
+      const b = pads[1] ?? null
+      return padsSwapped ? { square: b, circle: a } : { square: a, circle: b }
+    }
+
+    function padVector(pad: Gamepad | null): { x: number; y: number } {
+      if (!pad) return { x: 0, y: 0 }
+      let x = pad.axes[0] ?? 0
+      let y = pad.axes[1] ?? 0
+      if (Math.hypot(x, y) < 0.25) {
+        x = 0
+        y = 0
+      }
+      if (pad.buttons[14]?.pressed) x -= 1 // d-pad
+      if (pad.buttons[15]?.pressed) x += 1
+      if (pad.buttons[12]?.pressed) y -= 1
+      if (pad.buttons[13]?.pressed) y += 1
+      return { x, y }
+    }
+
+    function handlePadButtons() {
+      const pads = connectedPads()
+      const signature = pads.map((p) => p.index).join(',') + (padsSwapped ? '|s' : '')
+      if (signature !== lastPadSignature) {
+        lastPadSignature = signature
+        pushHud() // refresh the connected-controller indicator
+      }
+      for (const pad of pads) {
+        const prev = prevPadButtons.get(pad.index) ?? []
+        const pressed = pad.buttons.map((b) => b.pressed)
+        prevPadButtons.set(pad.index, pressed)
+        const rising = (i: number) => pressed[i] && !prev[i]
+        if (rising(8)) {
+          // Select/Back: swap which shape this pad drives
+          padsSwapped = !padsSwapped
+          pushHud()
+        }
+        if (rising(9) || (status === 'won' && rising(0))) {
+          // Start restarts the level; on the win screen Start or A plays again
+          if (status === 'won') deaths = 0
+          loadLevel(status === 'won' ? 0 : levelIndex)
+        }
+      }
     }
 
     function loadLevel(index: number) {
@@ -223,6 +290,7 @@ export default function GameCanvas({ onHudChange, paused = false }: Props) {
     }
 
     function update(dt: number) {
+      handlePadButtons()
       if (status === 'dead' || status === 'levelComplete') {
         statusTimer -= dt
         if (statusTimer <= 0) {
@@ -241,17 +309,29 @@ export default function GameCanvas({ onHudChange, paused = false }: Props) {
       if (status !== 'playing') return
 
       const openDoors = openDoorLetters()
+      const pads = padAssignment()
+      const squarePad = padVector(pads.square)
+      const circlePad = padVector(pads.circle)
       const inputs: [Player, number, number][] = [
-        [square, (keys.has('d') ? 1 : 0) - (keys.has('a') ? 1 : 0), (keys.has('s') ? 1 : 0) - (keys.has('w') ? 1 : 0)],
-        [circle, (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0), (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0)],
+        [
+          square,
+          (keys.has('d') ? 1 : 0) - (keys.has('a') ? 1 : 0) + squarePad.x,
+          (keys.has('s') ? 1 : 0) - (keys.has('w') ? 1 : 0) + squarePad.y,
+        ],
+        [
+          circle,
+          (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0) + circlePad.x,
+          (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0) + circlePad.y,
+        ],
       ]
       for (const [p, ix, iy] of inputs) {
         let vx = ix
         let vy = iy
-        if (vx !== 0 && vy !== 0) {
-          const inv = 1 / Math.SQRT2
-          vx *= inv
-          vy *= inv
+        // clamp to unit length: keyboard diagonals normalize, analog stays analog
+        const mag = Math.hypot(vx, vy)
+        if (mag > 1) {
+          vx /= mag
+          vy /= mag
         }
         const dx = vx * p.speed * dt
         const dy = vy * p.speed * dt
@@ -501,7 +581,7 @@ export default function GameCanvas({ onHudChange, paused = false }: Props) {
         ctx.shadowBlur = 0
         ctx.font = `18px 'Segoe UI', sans-serif`
         ctx.fillStyle = '#9aa3c7'
-        ctx.fillText(`Teamwork wins. Wipeouts: ${deaths} — press Enter to play again`, w / 2, h / 2 + 24)
+        ctx.fillText(`Teamwork wins. Wipeouts: ${deaths} — press Enter (or Start) to play again`, w / 2, h / 2 + 24)
         ctx.restore()
       }
     }
